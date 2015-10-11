@@ -12,6 +12,8 @@ var inputs map[string][]byte = map[string][]byte{
 	"json": []byte(`{"hello":["world","43"],"toto":true}`),
 	"toml": []byte("hello = [\"world\", \"43\"]\ntoto = true\n"),
 	"yaml": []byte("hello:\n- world\n- \"43\"\ntoto: true\n"),
+	// "xmp":
+	// "msgpack": []byte{130, 165, 104, 101, 108, 108, 111, 146, 165, 119, 111, 114, 108, 100, 162, 52, 51, 164, 116, 111, 116, 111, 195},
 }
 
 func TestFish_Parse(t *testing.T) {

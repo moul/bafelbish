@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/BurntSushi/toml"
+	"gopkg.in/vmihailenco/msgpack.v2"
 	"gopkg.in/yaml.v2"
 )
 
@@ -20,6 +21,7 @@ const (
 	formatJSON
 	formatTOML
 	formatXML
+	formatMsgpack
 	// FIXME: add new formats
 	// FIXME: add automatic mode
 )
@@ -38,10 +40,11 @@ func NewFish() Fish {
 
 func formatFromString(name string) (format, error) {
 	formatMapping := map[string]format{
-		"json": formatJSON,
-		"yaml": formatYAML,
-		"toml": formatTOML,
-		"xml":  formatXML,
+		"json":    formatJSON,
+		"yaml":    formatYAML,
+		"toml":    formatTOML,
+		"xml":     formatXML,
+		"msgpack": formatMsgpack,
 	}
 	if match, found := formatMapping[strings.ToLower(name)]; found {
 		return match, nil
@@ -98,6 +101,8 @@ func Marshal(data interface{}, outputFormat format) ([]byte, error) {
 		result, err = xml.Marshal(&data)
 	case formatYAML:
 		result, err = yaml.Marshal(&data)
+	case formatMsgpack:
+		result, err = msgpack.Marshal(&data)
 	case formatTOML:
 		buf := new(bytes.Buffer)
 		err = toml.NewEncoder(buf).Encode(data)

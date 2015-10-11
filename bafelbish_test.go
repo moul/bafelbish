@@ -16,7 +16,6 @@ var inputs map[string][]byte = map[string][]byte{
 
 func TestFish_Parse(t *testing.T) {
 	Convey("Testing Fish.Parse()", t, func() {
-
 		for inputFormat, inputBuf := range inputs {
 			for outputFormat, outputBuf := range inputs {
 				Convey(fmt.Sprintf("%s -> %s", inputFormat, outputFormat), func() {
@@ -33,7 +32,6 @@ func TestFish_Parse(t *testing.T) {
 					err = fish.Parse(input, output)
 					// fmt.Printf("----\n%s -> %s\n%s\n", inputFormat, outputFormat, string(inputBuf))
 					So(output.String(), ShouldEqual, string(outputBuf))
-
 				})
 			}
 		}

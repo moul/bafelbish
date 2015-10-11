@@ -3,6 +3,7 @@ package bafelbish
 import (
 	"bytes"
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"io"
 	"strings"
@@ -18,6 +19,7 @@ const (
 	formatYAML
 	formatJSON
 	formatTOML
+	formatXML
 	// FIXME: add new formats
 	// FIXME: add automatic mode
 )
@@ -39,6 +41,7 @@ func formatFromString(name string) (format, error) {
 		"json": formatJSON,
 		"yaml": formatYAML,
 		"toml": formatTOML,
+		"xml":  formatXML,
 	}
 	if match, found := formatMapping[strings.ToLower(name)]; found {
 		return match, nil
@@ -69,6 +72,8 @@ func Unmarshal(input []byte, inputFormat format) (interface{}, error) {
 	case formatTOML:
 		_, err = toml.Decode(string(input), &data)
 		// FIXME: use effective bytes to string instead whole copy
+	case formatXML:
+		err = xml.Unmarshal(input, &data)
 	case formatYAML:
 		err = yaml.Unmarshal(input, &data)
 		if err == nil {
@@ -89,6 +94,8 @@ func Marshal(data interface{}, outputFormat format) ([]byte, error) {
 	case formatJSON:
 		result, err = json.Marshal(&data)
 		// FIXME: option to indent json
+	case formatXML:
+		result, err = xml.Marshal(&data)
 	case formatYAML:
 		result, err = yaml.Marshal(&data)
 	case formatTOML:

@@ -71,7 +71,9 @@ func Unmarshal(input []byte, inputFormat format) (interface{}, error) {
 		// FIXME: use effective bytes to string instead whole copy
 	case formatYAML:
 		err = yaml.Unmarshal(input, &data)
-		// FIXME: convert maps to string maps
+		if err == nil {
+			data, err = convertMapsToStringMaps(data)
+		}
 	default:
 		err = fmt.Errorf("unsupported input format")
 	}

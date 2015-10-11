@@ -13,6 +13,7 @@ import (
 	"howett.net/plist"
 
 	"github.com/BurntSushi/toml"
+	"github.com/hydrogen18/stalecucumber"
 	"gopkg.in/vmihailenco/msgpack.v2"
 	"gopkg.in/yaml.v2"
 )
@@ -28,6 +29,7 @@ const (
 	formatMsgpack
 	formatPlist
 	formatBson
+	formatPickle
 	// FIXME: handle other plist formats: binary, openstep, gnustep
 	// FIXME: add form-urlencoded
 	// FIXME: SDL
@@ -59,6 +61,7 @@ func formatFromString(name string) (format, error) {
 		"msgpack": formatMsgpack,
 		"plist":   formatPlist,
 		"bson":    formatBson,
+		"pickle":  formatPickle,
 	}
 	if match, found := formatMapping[strings.ToLower(name)]; found {
 		return match, nil
@@ -92,6 +95,10 @@ func Unmarshal(input []byte, inputFormat format) (interface{}, error) {
 	case formatXML:
 		err = xml.Unmarshal(input, &data)
 	case formatMsgpack:
+	case formatPickle:
+		buf := new(bytes.Buffer)
+		buf.Write(input)
+		err = stalecucumber.UnpackInto(&data).From(stalecucumber.Unpickle(buf))
 	case formatBson:
 		err = bson.Unmarshal(input, &data)
 	case formatPlist:
@@ -126,6 +133,11 @@ func Marshal(data interface{}, outputFormat format) ([]byte, error) {
 		result, err = msgpack.Marshal(&data)
 	case formatBson:
 		result, err = bson.Marshal(&data)
+	case formatPickle:
+		buf := new(bytes.Buffer)
+		pickler := stalecucumber.NewPickler(buf)
+		_, err = pickler.Pickle(result)
+		result = buf.Bytes()
 	case formatPlist:
 		// result, err = plist.Marshal(&data, plist.XMLFormat)
 		output := new(bytes.Buffer)

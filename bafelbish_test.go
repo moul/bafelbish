@@ -12,6 +12,7 @@ var inputs map[string][]byte = map[string][]byte{
 	"json": []byte(`{"hello":["world","43"],"toto":true}`),
 	"toml": []byte("hello = [\"world\", \"43\"]\ntoto = true\n"),
 	"yaml": []byte("hello:\n- world\n- \"43\"\ntoto: true\n"),
+	// "pickle": []byte("..."),
 	// "bson": []byte("..."),
 	// "plist": []byte("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\"><dict><key>hello</key><array><string>world</string><string>43</string></array><key>toto</key><true></true></dict></plist>"),
 	// "xml": []byte("..."),

@@ -8,6 +8,8 @@ import (
 	"io"
 	"strings"
 
+	"camlistore.org/third_party/labix.org/v2/mgo/bson"
+
 	"howett.net/plist"
 
 	"github.com/BurntSushi/toml"
@@ -25,7 +27,14 @@ const (
 	formatXML
 	formatMsgpack
 	formatPlist
-	// FIXME: add new formats
+	formatBson
+	// FIXME: handle other plist formats: binary, openstep, gnustep
+	// FIXME: add form-urlencoded
+	// FIXME: SDL
+	// FIXME: go format
+	// FIXME: php format
+	// FIXME: bson
+	// FIXME: xdr
 	// FIXME: add automatic mode
 )
 
@@ -49,6 +58,7 @@ func formatFromString(name string) (format, error) {
 		"xml":     formatXML,
 		"msgpack": formatMsgpack,
 		"plist":   formatPlist,
+		"bson":    formatBson,
 	}
 	if match, found := formatMapping[strings.ToLower(name)]; found {
 		return match, nil
@@ -82,6 +92,8 @@ func Unmarshal(input []byte, inputFormat format) (interface{}, error) {
 	case formatXML:
 		err = xml.Unmarshal(input, &data)
 	case formatMsgpack:
+	case formatBson:
+		err = bson.Unmarshal(input, &data)
 	case formatPlist:
 		input := bytes.NewReader(input)
 		decoder := plist.NewDecoder(input)
@@ -112,6 +124,8 @@ func Marshal(data interface{}, outputFormat format) ([]byte, error) {
 		result, err = yaml.Marshal(&data)
 	case formatMsgpack:
 		result, err = msgpack.Marshal(&data)
+	case formatBson:
+		result, err = bson.Marshal(&data)
 	case formatPlist:
 		// result, err = plist.Marshal(&data, plist.XMLFormat)
 		output := new(bytes.Buffer)

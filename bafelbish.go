@@ -8,6 +8,8 @@ import (
 	"io"
 	"strings"
 
+	"howett.net/plist"
+
 	"github.com/BurntSushi/toml"
 	"gopkg.in/vmihailenco/msgpack.v2"
 	"gopkg.in/yaml.v2"
@@ -22,6 +24,7 @@ const (
 	formatTOML
 	formatXML
 	formatMsgpack
+	formatPlist
 	// FIXME: add new formats
 	// FIXME: add automatic mode
 )
@@ -45,6 +48,7 @@ func formatFromString(name string) (format, error) {
 		"toml":    formatTOML,
 		"xml":     formatXML,
 		"msgpack": formatMsgpack,
+		"plist":   formatPlist,
 	}
 	if match, found := formatMapping[strings.ToLower(name)]; found {
 		return match, nil
@@ -77,6 +81,11 @@ func Unmarshal(input []byte, inputFormat format) (interface{}, error) {
 		// FIXME: use effective bytes to string instead whole copy
 	case formatXML:
 		err = xml.Unmarshal(input, &data)
+	case formatMsgpack:
+	case formatPlist:
+		input := bytes.NewReader(input)
+		decoder := plist.NewDecoder(input)
+		err = decoder.Decode(data)
 	case formatYAML:
 		err = yaml.Unmarshal(input, &data)
 		if err == nil {
@@ -103,6 +112,12 @@ func Marshal(data interface{}, outputFormat format) ([]byte, error) {
 		result, err = yaml.Marshal(&data)
 	case formatMsgpack:
 		result, err = msgpack.Marshal(&data)
+	case formatPlist:
+		// result, err = plist.Marshal(&data, plist.XMLFormat)
+		output := new(bytes.Buffer)
+		encoder := plist.NewEncoder(output)
+		err = encoder.Encode(data)
+		result = output.Bytes()
 	case formatTOML:
 		buf := new(bytes.Buffer)
 		err = toml.NewEncoder(buf).Encode(data)

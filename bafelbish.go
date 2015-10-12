@@ -8,14 +8,12 @@ import (
 	"io"
 	"strings"
 
-	"camlistore.org/third_party/labix.org/v2/mgo/bson"
-
-	"howett.net/plist"
-
 	"github.com/BurntSushi/toml"
+	"github.com/DHowett/go-plist"
 	"github.com/hydrogen18/stalecucumber"
 	"gopkg.in/vmihailenco/msgpack.v2"
 	"gopkg.in/yaml.v2"
+	"labix.org/v2/mgo/bson"
 )
 
 type format int

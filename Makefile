@@ -1,3 +1,11 @@
+all: build
+
+
+.PHONY: build
+build:
+	go build -o bafelbish ./cmd/bafelbish
+
+
 .PHONY: convey
 convey:
 	go get github.com/smartystreets/goconvey
